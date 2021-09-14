@@ -9,10 +9,11 @@ class my_tank(pg.sprite.Sprite):
         self.speed = speed
         self.is_fire = False
         self.position = 1
-        self.fire = fire(0, 0, 2, "images\\fire.png", self.position)
+        self.fire = fire(0, 0, 3, "images\\fire.png", self.position)
         self.is_destroyed = False
         self.move = 0
         self.move_times = 0
+        self.path = None
 
     def Fire(self, file):
         self.is_fire = True
