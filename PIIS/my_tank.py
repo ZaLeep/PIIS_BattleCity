@@ -2,7 +2,7 @@ import pygame as pg
 from fire import fire
 
 class my_tank(pg.sprite.Sprite):
-    def __init__(self, x, y, speed, filename):
+    def __init__(self, x, y, speed, hp, filename):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.image.load(filename).convert_alpha()
         self.rect = self.image.get_rect(center = (x, y))
@@ -14,6 +14,7 @@ class my_tank(pg.sprite.Sprite):
         self.move = 0
         self.move_times = 0
         self.path = None
+        self.hp = hp
 
     def Fire(self, file):
         self.is_fire = True

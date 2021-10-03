@@ -1,0 +1,132 @@
+    def bfs(self, start, finish):
+        j_s = int(start[0] / 32)
+        i_s = int(start[1] / 32)
+        j_f = int(finish[0] / 32)
+        i_f = int(finish[1] / 32)
+        if (start[0] - 13) // 32 != j_s:
+            j_s = j_s * 2
+        elif (start[0] + 13) // 32 != j_s:
+            j_s = j_s * 2 + 2
+        else:
+            j_s = j_s * 2 + 1
+
+        if (start[1] - 13) // 32 != i_s:
+            i_s = i_s * 2
+        elif (start[1] + 13) // 32 != i_s:
+            i_s = i_s * 2 + 2
+        else:
+            i_s = i_s * 2 + 1
+
+        if (finish[0] - 13) // 32 != j_f:
+            j_f = j_f * 2
+        elif (finish[0] + 13) // 32 != j_f:
+            j_f = j_f * 2 + 2
+        else:
+            j_f = j_f * 2 + 1
+
+        if (finish[1] - 13) // 32 != i_f:
+            i_f = i_f * 2
+        elif (finish[1] + 13) // 32 != i_f:
+            i_f = i_f * 2 + 2
+        else:
+            i_f = i_f * 2 + 1
+
+        q = []
+        q.append([(i_s, j_s), (-1, -1)])
+        v = []
+        visited = []
+        visited.append(q[0])
+        prev = []
+        count = 0
+        f = True
+        while q and f:
+            curr = q[0][0]
+            curr_prev = q[0][1]
+            q.pop(0)
+            v.append(curr)
+            prev.append(curr_prev)
+            if v[len(v) - 1][0] == i_f and v[len(v) - 1][1] == j_f:
+                f = False
+            if f and visited.count((curr[0] + 1, curr[1])) == 0 and self.check((curr[0] + 1, curr[1])):
+                q.append([(curr[0] + 1, curr[1]), curr])
+                visited.append((curr[0] + 1, curr[1]))
+            if f and visited.count((curr[0], curr[1] + 1)) == 0 and self.check((curr[0], curr[1] + 1)):
+                q.append([(curr[0], curr[1] + 1), curr])
+                visited.append((curr[0], curr[1] + 1))
+            if f and visited.count((curr[0] - 1, curr[1])) == 0 and self.check((curr[0] - 1, curr[1])):
+                q.append([(curr[0] - 1, curr[1]), curr])
+                visited.append((curr[0] - 1, curr[1]))
+            if f and visited.count((curr[0], curr[1] - 1)) == 0 and self.check((curr[0], curr[1] - 1)):
+                q.append([(curr[0], curr[1] - 1), curr])
+                visited.append((curr[0], curr[1] - 1))
+        path = []
+        path.append((i_f, j_f))
+        p = (prev[len(v) - 1][0], prev[len(v) - 1][1])
+        if p == (-1, -1):
+            return path
+        f = True
+        while f:
+            i = v.index(p)
+            path.append(p)
+            p = (prev[i][0], prev[i][1])
+            if p == (-1, -1):
+                f = False
+        if len(q) == 0:
+            path.clear()
+        return path
+
+    def dfs(self, start, finish):
+        j_s = int(start[0] / 16)
+        i_s = int(start[1] / 16)
+        j_f = int(finish[0] / 16)
+        i_f = int(finish[1] / 16)
+        path = []
+        curr_path = []
+        path_length = -1
+        f = [True]
+        self.dfs_tick((i_s, j_s), (i_f, j_f), path, f)
+        if path[len(path) - 1] != (i_f, j_f):
+            path.clear()
+        return path
+
+    def dfs_tick(self, curr, finish, c_p, f):
+                c_p.append(curr)
+        if curr == finish:
+            f = False
+            return
+        else:
+            if c_p.count((curr[0] + 1, curr[1])) == 0 and self.check((curr[0] + 1, curr[1])):
+                self.dfs_tick((curr[0] + 1, curr[1]), finish, c_p, f)
+                if c_p[len(c_p) - 1] == finish:
+                    return
+            if c_p.count((curr[0], curr[1] + 1)) == 0 and self.check((curr[0], curr[1] + 1)):
+                self.dfs_tick((curr[0], curr[1] + 1), finish, c_p, f)
+                if c_p[len(c_p) - 1] == finish:
+                    return
+            if c_p.count((curr[0] - 1, curr[1])) == 0 and self.check((curr[0] - 1, curr[1])):
+                self.dfs_tick((curr[0] - 1, curr[1]), finish, c_p, f)
+                if c_p[len(c_p) - 1] == finish:
+                    return
+            if c_p.count((curr[0], curr[1] - 1)) == 0 and self.check((curr[0], curr[1] - 1)):
+                self.dfs_tick((curr[0], curr[1] - 1), finish, c_p, f)
+                if c_p[len(c_p) - 1] == finish:
+                    return
+
+        if (finish[0] - 13) // 32 != j_f:
+            j_f = j_f * 2
+        elif (finish[0] + 13) // 32 != j_f:
+            j_f = j_f * 2 + 2
+        else:
+            j_f = j_f * 2 + 1
+
+        if (finish[1] - 13) // 32 != i_f:
+            i_f = i_f * 2
+        elif (finish[1] + 13) // 32 != i_f:
+            i_f = i_f * 2 + 2
+        else:
+            i_f = i_f * 2 + 1
+
+keys[pg.K_LEFT] or keys[pg.K_a]
+keys[pg.K_UP] or keys[pg.K_w]
+keys[pg.K_RIGHT] or keys[pg.K_d]
+keys[pg.K_DOWN] or keys[pg.K_s]

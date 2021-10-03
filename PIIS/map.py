@@ -16,6 +16,8 @@ class map(pg.sprite.Sprite):
         self.menu_image = []
         self.menu_rect = []
         self.enemy_count = []
+        self.hp = []
+        self.hp_rect = []
 
     def select_map(self, map):
         if map < 4:
@@ -28,7 +30,7 @@ class map(pg.sprite.Sprite):
             for i in range(len(first)):
                 for j in range(len(first[i])):
                     if first[i][j] == 7:
-                        if random.randint(1, 100) <= 40:
+                        if random.randint(1, 100) <= 30:
                             first[i][j] = 2
                         else:
                             first[i][j] = 0
@@ -43,6 +45,8 @@ class map(pg.sprite.Sprite):
         self.rect.clear()
         self.menu_image.clear()
         self.menu_rect.clear()
+        self.hp.clear()
+        self.hp_rect.clear()
         for i in range(self.height):
             for j in range(self.width):
                 if self.digitmap[i][j] == 0:
@@ -61,7 +65,11 @@ class map(pg.sprite.Sprite):
         
         for j in range(10):
             self.menu_image.append(pg.image.load("images\\menu_tank.png").convert_alpha())
-            self.menu_rect.append(self.menu_image[j].get_rect(center = (56 + j * 24, 488)))
+            self.menu_rect.append(self.menu_image[j].get_rect(center = (9 + j * 24, 488)))
+        for j in range(3):
+            self.hp.append(pg.image.load("images\\hp.png").convert_alpha())
+            self.hp_rect.append(self.menu_image[j].get_rect(center = (423 + 24 * j, 488)))
+
     
     def is_path_free(self, x, y, is_bullet = 0, pos = 1):
         j = int(x / 8)
@@ -77,176 +85,47 @@ class map(pg.sprite.Sprite):
             return True
 
     def boom(self, i, j, pos):
-        if self.digitmap[i][j] == 2:
-            self.digitmap[i][j] = 0
-            self.image[j + i * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        if self.digitmap[i + 1][j] == 2:
-            self.digitmap[i + 1][j] = 0
-            self.image[j + (i + 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        elif pos == 1:
-            if self.digitmap[i][j + 2] == 2:
-                self.digitmap[i][j + 2] = 0
-                self.image[j + 2 + i * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i][j - 2] == 2:
-                self.digitmap[i][j - 2] = 0
-                self.image[j - 2 + i * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i - 1][j - 2] == 2:
-                self.digitmap[i - 1][j - 2] = 0
-                self.image[j - 2 + (i - 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i - 1][j + 2] == 2:
-                self.digitmap[i - 1][j + 2] = 0
-                self.image[j + 2 + (i - 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        if self.digitmap[i - 1][j] == 2:
-            self.digitmap[i - 1][j] = 0
-            self.image[j + (i - 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        elif pos == 3:
-            if self.digitmap[i][j + 2] == 2:
-                self.digitmap[i][j + 2] = 0
-                self.image[j + 2 + i * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i][j - 2] == 2:
-                self.digitmap[i][j - 2] = 0
-                self.image[j - 2 + i * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i + 1][j - 2] == 2:
-                self.digitmap[i + 1][j - 2] = 0
-                self.image[j - 2 + (i + 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i + 1][j + 2] == 2:
-                self.digitmap[i + 1][j + 2] = 0
-                self.image[j + 2 + (i + 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        if self.digitmap[i][j + 1] == 2:
-            self.digitmap[i][j + 1] = 0
-            self.image[j + 1 + i * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        elif pos == 4:
-            if self.digitmap[i + 2][j] == 2:
-                self.digitmap[i + 2][j] = 0
-                self.image[j + (i + 2) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i - 2][j] == 2:
-                self.digitmap[i - 2][j] = 0
-                self.image[j + (i - 2) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i + 2][j - 1] == 2:
-                self.digitmap[i + 2][j - 1] = 0
-                self.image[j - 1 + (i + 2) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i - 2][j - 1] == 2:
-                self.digitmap[i - 2][j - 1] = 0
-                self.image[j - 1 + (i - 2) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        if self.digitmap[i][j - 1] == 2:
-            self.digitmap[i][j - 1] = 0
-            self.image[j - 1 + i * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        elif pos == 2:
-            if self.digitmap[i + 2][j] == 2:
-                self.digitmap[i + 2][j] = 0
-                self.image[j + (i + 2) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i - 2][j] == 2:
-                self.digitmap[i - 2][j] = 0
-                self.image[j + (i - 2) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i + 2][j + 1] == 2:
-                self.digitmap[i + 2][j + 1] = 0
-                self.image[j + 1 + (i + 2) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-            if self.digitmap[i - 2][j + 1] == 2:
-                self.digitmap[i - 2][j + 1] = 0
-                self.image[j + 1 + (i - 2) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-
-        if self.digitmap[i - 1][j - 1] == 2:
-            self.digitmap[i - 1][j - 1] = 0
-            self.image[j - 1 + (i - 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        if self.digitmap[i + 1][j - 1] == 2:
-            self.digitmap[i + 1][j - 1] = 0
-            self.image[j - 1 + (i + 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        if self.digitmap[i - 1][j + 1] == 2:
-            self.digitmap[i - 1][j + 1] = 0
-            self.image[j + 1 + (i - 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-        if self.digitmap[i + 1][j + 1] == 2:
-            self.digitmap[i + 1][j + 1] = 0
-            self.image[j + 1 + (i + 1) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
-
-    def bfs(self, start, finish):
-        j_s = int(start[0] / 16)
-        i_s = int(start[1] / 16)
-        j_f = int(finish[0] / 16)
-        i_f = int(finish[1] / 16)
-        q = []
-        q.append([(i_s, j_s), (-1, -1)])
-        v = []
-        visited = []
-        visited.append(q[0])
-        prev = []
-        count = 0
-        f = True
-        while q and f:
-            curr = q[0][0]
-            curr_prev = q[0][1]
-            q.pop(0)
-            v.append(curr)
-            prev.append(curr_prev)
-            if v[len(v) - 1][0] == i_f and v[len(v) - 1][1] == j_f:
-                f = False
-            if f and visited.count((curr[0] + 1, curr[1])) == 0 and self.check((curr[0] + 1, curr[1])):
-                q.append([(curr[0] + 1, curr[1]), curr])
-                visited.append((curr[0] + 1, curr[1]))
-            if f and visited.count((curr[0], curr[1] + 1)) == 0 and self.check((curr[0], curr[1] + 1)):
-                q.append([(curr[0], curr[1] + 1), curr])
-                visited.append((curr[0], curr[1] + 1))
-            if f and visited.count((curr[0] - 1, curr[1])) == 0 and self.check((curr[0] - 1, curr[1])):
-                q.append([(curr[0] - 1, curr[1]), curr])
-                visited.append((curr[0] - 1, curr[1]))
-            if f and visited.count((curr[0], curr[1] - 1)) == 0 and self.check((curr[0], curr[1] - 1)):
-                q.append([(curr[0], curr[1] - 1), curr])
-                visited.append((curr[0], curr[1] - 1))
-        path = []
-        path.append((i_f, j_f))
-        p = (prev[len(v) - 1][0], prev[len(v) - 1][1])
-        f = True
-        while f:
-            i = v.index(p)
-            path.append(p)
-            p = (prev[i][0], prev[i][1])
-            if p == (-1, -1):
-                f = False
-        if len(q) == 0:
-            path.clear()
-        return path
-
-    def dfs(self, start, finish):
-        j_s = int(start[0] / 16)
-        i_s = int(start[1] / 16)
-        j_f = int(finish[0] / 16)
-        i_f = int(finish[1] / 16)
-        path = []
-        curr_path = []
-        path_length = -1
-        f = [True]
-        self.dfs_tick((i_s, j_s), (i_f, j_f), path, f)
-        if path[len(path) - 1] != (i_f, j_f):
-            path.clear()
-        return path
-
-    def dfs_tick(self, curr, finish, c_p, f):
-        c_p.append(curr)
-        if curr == finish:
-            f = False
-            return
-        else:
-            if c_p.count((curr[0] + 1, curr[1])) == 0 and self.check((curr[0] + 1, curr[1])):
-                self.dfs_tick((curr[0] + 1, curr[1]), finish, c_p, f)
-                if c_p[len(c_p) - 1] == finish:
-                    return
-            if c_p.count((curr[0], curr[1] + 1)) == 0 and self.check((curr[0], curr[1] + 1)):
-                self.dfs_tick((curr[0], curr[1] + 1), finish, c_p, f)
-                if c_p[len(c_p) - 1] == finish:
-                    return
-            if c_p.count((curr[0] - 1, curr[1])) == 0 and self.check((curr[0] - 1, curr[1])):
-                self.dfs_tick((curr[0] - 1, curr[1]), finish, c_p, f)
-                if c_p[len(c_p) - 1] == finish:
-                    return
-            if c_p.count((curr[0], curr[1] - 1)) == 0 and self.check((curr[0], curr[1] - 1)):
-                self.dfs_tick((curr[0], curr[1] - 1), finish, c_p, f)
-                if c_p[len(c_p) - 1] == finish:
-                    return
+        i = i // 2 * 2
+        j = j // 2 * 2
+        for a in range(4):
+            for b in range(4): 
+                if self.digitmap[i + a][j + b] == 2:
+                    self.digitmap[i + a][j + b] = 0
+                    self.image[j + b + (i + a) * (len(self.digitmap[0] + 1))] = pg.image.load("images\\none.png").convert_alpha()
 
     def ucs(self, start, finish):
-        j_s = int(start[0] / 16)
-        i_s = int(start[1] / 16)
-        j_f = int(finish[0] / 16)
-        i_f = int(finish[1] / 16)
+        j_s = int(start[0] / 32)
+        i_s = int(start[1] / 32)
+        j_f = int(finish[0] / 32)
+        i_f = int(finish[1] / 32)
+        if (start[0] - 13) // 32 != j_s:
+            j_s = j_s * 2
+        elif (start[0] + 13) // 32 != j_s:
+            j_s = j_s * 2 + 2
+        else:
+            j_s = j_s * 2 + 1
+
+        if (start[1] - 13) // 32 != i_s:
+            i_s = i_s * 2
+        elif (start[1] + 13) // 32 != i_s:
+            i_s = i_s * 2 + 2
+        else:
+            i_s = i_s * 2 + 1
+
+        if (finish[0] - 13) // 32 != j_f:
+            j_f = j_f * 2
+        elif (finish[0] + 13) // 32 != j_f:
+            j_f = j_f * 2 + 2
+        else:
+            j_f = j_f * 2 + 1
+
+        if (finish[1] - 13) // 32 != i_f:
+            i_f = i_f * 2
+        elif (finish[1] + 13) // 32 != i_f:
+            i_f = i_f * 2 + 2
+        else:
+            i_f = i_f * 2 + 1
+            
         path_matrix = []
         for i in range(len(self.small_digitmap)):
             line = []
@@ -277,6 +156,90 @@ class map(pg.sprite.Sprite):
         path = []
         f = True
         curr = (i_f, j_f)
+        if curr == (-1, -1):
+            return path
+        while q and f:
+            path.append(path_matrix[curr[0]][curr[1]])
+            if path_matrix[curr[0]][curr[1]] == (i_s, j_s):
+                f = False
+            else:
+                curr = path_matrix[curr[0]][curr[1]]
+        return path
+
+    def Fmin(self, q):
+        i = 0
+        min = q[i][2][0] + q[i][2][1]
+        for j in range(len(q) - 1):
+            if min > q[j + 1][2][0] + q[j + 1][2][1]:
+                i = j
+                min = q[j + 1][2][0] + q[j + 1][2][1]
+        return i
+
+    def RandBlock(self):
+        f = True
+        i = -1
+        j = -1
+        while f:
+            i = random.randint(1, 13)
+            j = random.randint(1, 13)
+            if self.small_digitmap[i * 2][j * 2] % 4 == 0 and self.small_digitmap[i * 2 + 1][j * 2] % 4 == 0 and self.small_digitmap[i * 2][j * 2 + 1] % 4 == 0 and self.small_digitmap[i * 2 + 1][j * 2 + 1] % 4 == 0:
+                f = False
+        return (i * 2 + 1, j * 2 + 1)
+
+    def A_star(self, start, finish):
+        j_s = int(start[0] / 32)
+        i_s = int(start[1] / 32)
+        j_f = finish[1]
+        i_f = finish[0]
+        if (start[0] - 13) // 32 != j_s:
+            j_s = j_s * 2
+        elif (start[0] + 13) // 32 != j_s:
+            j_s = j_s * 2 + 2
+        else:
+            j_s = j_s * 2 + 1
+
+        if (start[1] - 13) // 32 != i_s:
+            i_s = i_s * 2
+        elif (start[1] + 13) // 32 != i_s:
+            i_s = i_s * 2 + 2
+        else:
+            i_s = i_s * 2 + 1
+            
+        path_matrix = []
+        for i in range(len(self.small_digitmap)):
+            line = []
+            for j in range(len(self.small_digitmap[i])):
+                line.append((-1, -1))
+            path_matrix.append(line)
+        q = [[(i_s, j_s), (-2, -2), (0, 3228)]]
+        f = True
+        while q and f:
+            i = self.Fmin(q)
+            curr = q[i][0]
+            prev = q[i][1]
+            evr = q[i][2]
+            q.pop(i)
+            path_matrix[curr[0]][curr[1]] = prev
+            if curr[0] == i_f and curr[1] == j_f:
+                f = False
+            if f and path_matrix[curr[0] + 1][curr[1]] == (-1, -1) and self.check((curr[0] + 1, curr[1])):
+                path_matrix[curr[0] + 1][curr[1]] = (-2, -2)
+                q.append([(curr[0] + 1, curr[1]), curr, (evr[0] + 1, self.distance((curr[0] + 1, curr[1]), (i_f, j_f)))])
+            if f and path_matrix[curr[0]][curr[1] + 1] == (-1, -1) and self.check((curr[0], curr[1] + 1)):
+                path_matrix[curr[0]][curr[1] + 1] = (-2, -2)
+                q.append([(curr[0], curr[1] + 1), curr, (evr[0] + 1, self.distance((curr[0], curr[1] + 1), (i_f, j_f)))])
+            if f and path_matrix[curr[0] - 1][curr[1]] == (-1, -1) and self.check((curr[0] - 1, curr[1])):
+                path_matrix[curr[0] - 1][curr[1]] = (-2, -2)
+                q.append([(curr[0] - 1, curr[1]), curr, (evr[0] - 1, self.distance((curr[0] + 1, curr[1]), (i_f, j_f)))])
+            if f and path_matrix[curr[0]][curr[1] - 1] == (-1, -1) and self.check((curr[0], curr[1] - 1)):
+                path_matrix[curr[0]][curr[1] - 1] = (-2, -2)
+                q.append([(curr[0], curr[1] - 1), curr, (evr[0] + 1, self.distance((curr[0], curr[1] - 1), (i_f, j_f)))])
+        path = []
+        f = True
+        curr = (i_f, j_f)
+        if curr == (-1, -1):
+            return path
+        path.append(curr)
         while q and f:
             path.append(path_matrix[curr[0]][curr[1]])
             if path_matrix[curr[0]][curr[1]] == (i_s, j_s):
@@ -296,8 +259,32 @@ class map(pg.sprite.Sprite):
     def check(self, point):
         if self.small_digitmap[point[0]][point[1]] % 4 != 0:
             return False
+        if self.small_digitmap[point[0] - 1][point[1]] % 4 != 0:
+            return False
+        if self.small_digitmap[point[0]][point[1] - 1] % 4 != 0:
+            return False
+        if self.small_digitmap[point[0] - 1][point[1] - 1] % 4 != 0:
+            return False
         return True
 
+    def bottomright(self, point):
+        j = point[0] // 32
+        i = point[1] // 32
+        if (point[0] - 13) // 32 != j:
+            j = j * 2
+        elif (point[0] + 13) // 32 != j:
+            j = j * 2 + 2
+        else:
+            j = j * 2 + 1
+
+        if (point[1] - 13) // 32 != i:
+            i = i * 2
+        elif (point[1] + 13) // 32 != i:
+            i = i * 2 + 2
+        else:
+            i = i * 2 + 1
+        return (i, j)
+    
     def update_smallmap(self):
         for i in range(len(self.small_digitmap)):
             for j in range(len(self.small_digitmap[i])):
