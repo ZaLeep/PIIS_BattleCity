@@ -130,3 +130,74 @@ keys[pg.K_LEFT] or keys[pg.K_a]
 keys[pg.K_UP] or keys[pg.K_w]
 keys[pg.K_RIGHT] or keys[pg.K_d]
 keys[pg.K_DOWN] or keys[pg.K_s]
+
+# for i in range(len(enemies)):
+        #     if not enemies[i].is_destroyed and enemies[i].path:
+        #         for p in enemies[i].path:
+        #             if color == 0:
+        #                 pg.draw.circle(sc, (255, 0, 0), (16 * p[1], 16 * p[0]), 6, 6)
+        #             if color == 1:
+        #                 pg.draw.circle(sc, (0, 255, 0), (16 * p[1], 16 * p[0]), 4, 4)
+        #             if color == 2:
+        #                 pg.draw.circle(sc, (0, 0, 255), (16 * p[1], 16 * p[0]), 2, 2)
+        #         color += 1
+
+if tank1.path:
+            for p in tank1.path:
+                pg.draw.circle(sc, (255, 255, 255), (16 * p[1], 16 * p[0]), 2, 2)
+
+#s_time = time.time()
+#algh_time = (time.time() - s_time) * 1000
+        #time_text = t_font.render(f"UCS: {algh_time:.3f} mic_sec", True, (0, 0, 0))
+
+        # if tank1.move_times == 0:
+        #     if not tank1.path or my_map.bottomright(tank1.rect.center) == tank1.path[0]:
+        #         f = True
+        #         while f:
+        #             f = False
+        #             tank1.path = my_map.A_star(tank1.rect.center, my_map.RandBlock())
+        #             if len(tank1.path) == 1 and my_map.bottomright(tank1.rect.center) != tank1.path[0]:
+        #                 f = True
+        #     else:
+        #         tank1.path = my_map.A_star(tank1.rect.center, tank1.path[0])
+        #     if tank1.path:
+        #         tank1.move_times = 16
+        #         point1 = tank1.path[len(tank1.path) - 1]
+        #         point2 = tank1.path[len(tank1.path) - 2]
+        #         if point2[0] < point1[0]:
+        #             tank1.move = 1
+        #         elif point2[0] > point1[0]:
+        #             tank1.move = 3
+        #         elif point2[1] > point1[1]:
+        #             tank1.move = 2
+        #         else:
+        #             tank1.move = 4
+
+            if not tank1.is_fire:
+                flag = False
+                for e in enemies:
+                    if not e.is_destroyed and abs(tank1.rect.center[1] - e.rect.center[1]) <= 14 and tank1.rect.center[0] > e.rect.center[0]:
+                        flag = True
+                if flag:
+                    tank1.Fire("images\\fire.png")
+            if not tank1.is_fire:
+                flag = False
+                for e in enemies:
+                    if not e.is_destroyed and abs(tank1.rect.center[0] - e.rect.center[0]) <= 14 and tank1.rect.center[1] > e.rect.center[1]:
+                        flag = True
+                if flag:
+                    tank1.Fire("images\\fire.png")
+            if not tank1.is_fire:
+                flag = False
+                for e in enemies:
+                    if not e.is_destroyed and abs(tank1.rect.center[1] - e.rect.center[1]) <= 14 and tank1.rect.center[0] < e.rect.center[0]:
+                        flag = True
+                if flag:
+                    tank1.Fire("images\\fire.png")
+            if not tank1.is_fire:
+                flag = False
+                for e in enemies:
+                    if not e.is_destroyed and abs(tank1.rect.center[0] - e.rect.center[0]) <= 16 and tank1.rect.center[1] < e.rect.center[1]:
+                        flag = True
+                if flag:
+                    tank1.Fire("images\\fire.png")

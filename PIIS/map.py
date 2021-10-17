@@ -70,7 +70,6 @@ class map(pg.sprite.Sprite):
             self.hp.append(pg.image.load("images\\hp.png").convert_alpha())
             self.hp_rect.append(self.menu_image[j].get_rect(center = (423 + 24 * j, 488)))
 
-    
     def is_path_free(self, x, y, is_bullet = 0, pos = 1):
         j = int(x / 8)
         i = int(y / 8)
@@ -189,8 +188,8 @@ class map(pg.sprite.Sprite):
     def A_star(self, start, finish):
         j_s = int(start[0] / 32)
         i_s = int(start[1] / 32)
-        j_f = finish[1]
-        i_f = finish[0]
+        j_f = int(finish[0] / 32)
+        i_f = int(finish[1] / 32)
         if (start[0] - 13) // 32 != j_s:
             j_s = j_s * 2
         elif (start[0] + 13) // 32 != j_s:
@@ -204,6 +203,20 @@ class map(pg.sprite.Sprite):
             i_s = i_s * 2 + 2
         else:
             i_s = i_s * 2 + 1
+
+        if (finish[0] - 13) // 32 != j_f:
+            j_f = j_f * 2
+        elif (finish[0] + 13) // 32 != j_f:
+            j_f = j_f * 2 + 2
+        else:
+            j_f = j_f * 2 + 1
+
+        if (finish[1] - 13) // 32 != i_f:
+            i_f = i_f * 2
+        elif (finish[1] + 13) // 32 != i_f:
+            i_f = i_f * 2 + 2
+        else:
+            i_f = i_f * 2 + 1
             
         path_matrix = []
         for i in range(len(self.small_digitmap)):

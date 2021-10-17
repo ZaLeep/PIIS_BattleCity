@@ -14,18 +14,6 @@ def is_there_tank(my_tank, enemies, point):
             return True
     return False
 
-# def can_i_shoot(me, they, pos):
-#     if pos == 1:
-#         for e in they:
-#             if not e.is_destroyed:
-
-# def can_shoot(who1, who2, pos):
-#     if pos == 1:
-#         f == True
-#         while f:
-
-
-
 pg.init()
 sc = dp.set_mode((480, 498))
 dp.set_caption("Battle City")
@@ -57,12 +45,14 @@ FPS = 60
 fin = 0
 frames = 0
 
+start_dumb_count = 5
 my_map = map(60, 64)
 tank1 = None 
 enemies = []
 enemy_count = 10
 enemy_on_map = 0
 spawn = 1
+dumb_count = start_dumb_count
 spawn_point = [(48, 48), (240, 48), (48, 240), (432, 240), (432, 48)]
 
 pg.mixer.music.load("sounds\\Horse Steppin.mp3")
@@ -90,6 +80,7 @@ while True:
                     spawn = 1
                     enemy_on_map = 0
                     enemy_count = 10
+                    dumb_count = start_dumb_count
                     fin = 0
                     my_map.select_map(selected + 1)
                     tank1 = my_tank(240, 384, 1, 3, "images\my_tank.png")
@@ -146,16 +137,20 @@ while True:
                 r = random.randint(0,4)
                 if not is_there_tank(tank1, enemies, spawn_point[r]):
                     f = False
-                    enemies.append(my_tank(spawn_point[r][0], spawn_point[r][1], 1, 1, "images\enemy_tank.png"))
+                    if random.randint(1, enemy_count) <= dumb_count:
+                        enemies.append(my_tank(spawn_point[r][0], spawn_point[r][1], 1, 1, "images\enemy_tank.png", 0))
+                        dumb_count -= 1
+                    else:
+                        enemies.append(my_tank(spawn_point[r][0], spawn_point[r][1], 1, 1, "images\enemy_tank.png"))
                     enemy_on_map += 1
         
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 exit()
             elif event.type == pg.KEYDOWN:
-                # if event.key == pg.K_SPACE:
-                #     if not tank1.is_fire:
-                #         tank1.Fire("images\\fire.png")
+                if event.key == pg.K_SPACE:
+                    if not tank1.is_fire:
+                        tank1.Fire("images\\fire.png")
                 if event.key == pg.K_ESCAPE:
                     menu = True
                     enemies.clear()
@@ -164,31 +159,15 @@ while True:
                     search = 1
                     pg.mixer.music.load("sounds\\Horse Steppin.mp3")
                     pg.mixer.music.play(-1)
-        #keys = pg.key.get_pressed()
-
-        if tank1.move_times == 0:
-            if not tank1.path or my_map.bottomright(tank1.rect.center) == tank1.path[0]:
-                f = True
-                while f:
-                    f = False
-                    tank1.path = my_map.A_star(tank1.rect.center, my_map.RandBlock())
-                    if len(tank1.path) == 1 and my_map.bottomright(tank1.rect.center) != tank1.path[0]:
-                        f = True
-            else:
-                tank1.path = my_map.A_star(tank1.rect.center, tank1.path[0])
-            if tank1.path:
-                tank1.move_times = 16
-                point1 = tank1.path[len(tank1.path) - 1]
-                point2 = tank1.path[len(tank1.path) - 2]
-                if point2[0] < point1[0]:
-                    tank1.move = 1
-                elif point2[0] > point1[0]:
-                    tank1.move = 3
-                elif point2[1] > point1[1]:
-                    tank1.move = 2
-                else:
-                    tank1.move = 4
-
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT] or keys[pg.K_a]:
+            tank1.move = 4
+        elif keys[pg.K_UP] or keys[pg.K_w]:
+            tank1.move = 1
+        elif keys[pg.K_RIGHT] or keys[pg.K_d]:
+            tank1.move = 2
+        elif keys[pg.K_DOWN] or keys[pg.K_s]:
+            tank1.move = 3
         if tank1.move == 4:
             tank1.image = pg.transform.rotate(pg.image.load("images\\my_tank.png").convert_alpha(), 90)
             tank1.position = 4
@@ -198,14 +177,8 @@ while True:
                     f = False
             if f and my_map.is_path_free(tank1.rect.left - 1, tank1.rect.topleft[1]) and my_map.is_path_free(tank1.rect.left - 1, tank1.rect.bottomleft[1]) and my_map.is_path_free(tank1.rect.left - 1, tank1.rect.midleft[1]) and my_map.is_path_free(tank1.rect.left - 1, tank1.rect.midleft[1] - 7) and my_map.is_path_free(tank1.rect.left - 1, tank1.rect.midleft[1] + 7):
                 tank1.rect.x -= tank1.speed
-                tank1.move_times -= 1
-            if not tank1.is_fire:
-                flag = False
-                for e in enemies:
-                    if not e.is_destroyed and abs(tank1.rect.center[1] - e.rect.center[1]) <= 14 and tank1.rect.center[0] > e.rect.center[0]:
-                        flag = True
-                if flag:
-                    tank1.Fire("images\\fire.png")
+                #tank1.move_times -= 1
+                tank1.move = 0
         elif tank1.move == 1:
             tank1.image = pg.transform.rotate(pg.image.load("images\my_tank.png").convert_alpha(), 0)
             tank1.position = 1
@@ -215,14 +188,8 @@ while True:
                     f = False
             if f and my_map.is_path_free(tank1.rect.topleft[0], tank1.rect.topleft[1] - 1) and my_map.is_path_free(tank1.rect.topright[0], tank1.rect.topright[1] - 1) and my_map.is_path_free(tank1.rect.midtop[0], tank1.rect.midtop[1] - 1) and my_map.is_path_free(tank1.rect.midtop[0] + 7, tank1.rect.midtop[1] - 1) and my_map.is_path_free(tank1.rect.midtop[0] - 7, tank1.rect.midtop[1] - 1):
                 tank1.rect.y -= tank1.speed
-                tank1.move_times -= 1
-            if not tank1.is_fire:
-                flag = False
-                for e in enemies:
-                    if not e.is_destroyed and abs(tank1.rect.center[0] - e.rect.center[0]) <= 14 and tank1.rect.center[1] > e.rect.center[1]:
-                        flag = True
-                if flag:
-                    tank1.Fire("images\\fire.png")
+                #tank1.move_times -= 1
+                tank1.move = 0
         elif tank1.move == 2:
             tank1.image = pg.transform.rotate(pg.image.load("images\my_tank.png").convert_alpha(), 270)
             tank1.position = 2
@@ -232,14 +199,8 @@ while True:
                     f = False
             if f and my_map.is_path_free(tank1.rect.topright[0] + 1, tank1.rect.topright[1]) and my_map.is_path_free(tank1.rect.bottomright[0] + 1, tank1.rect.bottomright[1]) and my_map.is_path_free(tank1.rect.midright[0] + 1, tank1.rect.midright[1]) and my_map.is_path_free(tank1.rect.midright[0] + 1, tank1.rect.midright[1] + 7) and my_map.is_path_free(tank1.rect.midright[0] + 1, tank1.rect.midright[1] - 7):
                 tank1.rect.x += tank1.speed
-                tank1.move_times -= 1
-            if not tank1.is_fire:
-                flag = False
-                for e in enemies:
-                    if not e.is_destroyed and abs(tank1.rect.center[1] - e.rect.center[1]) <= 14 and tank1.rect.center[0] < e.rect.center[0]:
-                        flag = True
-                if flag:
-                    tank1.Fire("images\\fire.png")
+                #tank1.move_times -= 1
+                tank1.move = 0
         elif tank1.move == 3:
             tank1.image = pg.transform.rotate(pg.image.load("images\my_tank.png").convert_alpha(), 180)
             tank1.position = 3
@@ -249,34 +210,29 @@ while True:
                     f = False
             if f and my_map.is_path_free(tank1.rect.bottomleft[0], tank1.rect.bottomleft[1] + 1) and my_map.is_path_free(tank1.rect.bottomright[0], tank1.rect.bottomright[1] + 1) and my_map.is_path_free(tank1.rect.midbottom[0], tank1.rect.midbottom[1] + 1) and my_map.is_path_free(tank1.rect.midbottom[0] - 7, tank1.rect.midbottom[1] + 1) and my_map.is_path_free(tank1.rect.midbottom[0] + 7, tank1.rect.midbottom[1] + 1):
                 tank1.rect.y += tank1.speed
-                tank1.move_times -= 1
-            if not tank1.is_fire:
-                flag = False
-                for e in enemies:
-                    if not e.is_destroyed and abs(tank1.rect.center[0] - e.rect.center[0]) <= 14 and tank1.rect.center[1] < e.rect.center[1]:
-                        flag = True
-                if flag:
-                    tank1.Fire("images\\fire.png")
-    
-        #s_time = time.time()
-        for i in range(len(enemies)):
-            if not enemies[i].is_destroyed and enemies[i].move_times == 0:
-                enemies[i].path = my_map.ucs(enemies[i].rect.center, tank1.rect.center)
-                if enemies[i].path:
-                    enemies[i].move_times = 16
-                    point1 = enemies[i].path[len(enemies[i].path) - 1]
-                    point2 = enemies[i].path[len(enemies[i].path) - 2]
-                    if point2[0] < point1[0]:
-                        enemies[i].move = 1
-                    elif point2[0] > point1[0]:
-                        enemies[i].move = 3
-                    elif point2[1] > point1[1]:
-                        enemies[i].move = 2
-                    else:
-                        enemies[i].move = 4
-        #algh_time = (time.time() - s_time) * 1000
-        #time_text = t_font.render(f"UCS: {algh_time:.3f} mic_sec", True, (0, 0, 0))
+                #tank1.move_times -= 1
+                tank1.move = 0
 
+        for i in range(len(enemies)):
+            if enemies[i].smart:
+                if not enemies[i].is_destroyed and enemies[i].move_times == 0:
+                    enemies[i].path = my_map.A_star(enemies[i].rect.center, tank1.rect.center)
+                    if enemies[i].path:
+                        enemies[i].move_times = 16
+                        point1 = enemies[i].path[len(enemies[i].path) - 1]
+                        point2 = enemies[i].path[len(enemies[i].path) - 2]
+                        if point2[0] < point1[0]:
+                            enemies[i].move = 1
+                        elif point2[0] > point1[0]:
+                            enemies[i].move = 3
+                        elif point2[1] > point1[1]:
+                            enemies[i].move = 2
+                        else:
+                            enemies[i].move = 4
+            else:
+                if random.randint(0, 100) < 4:
+                    enemies[i].move = random.randint(1, 4)
+                    enemies[i].move_times = random.randint(10, 20)
         for q in enemies:
             if not q.is_destroyed:
                 if q.move == 4:
@@ -331,7 +287,7 @@ while True:
                     if f and my_map.is_path_free(q.rect.bottomleft[0], q.rect.bottomleft[1] + 1) and my_map.is_path_free(q.rect.bottomright[0], q.rect.bottomright[1] + 1) and my_map.is_path_free(q.rect.midbottom[0], q.rect.midbottom[1] + 1) and my_map.is_path_free(q.rect.midbottom[0] - 7, q.rect.midbottom[1] + 1) and my_map.is_path_free(q.rect.midbottom[0] + 7, q.rect.midbottom[1] + 1):
                         q.rect.y += q.speed
                         q.move_times -=1
-                if not q.is_fire and my_map.distance(q.rect.center, tank1.rect.center) < 150 and random.randint(0, 100) < 5:
+                if not q.is_fire and (not enemies[i].smart or my_map.distance(q.rect.center, tank1.rect.center) < 150) and random.randint(0, 100) < 3:
                     q.Fire("images\enemy_fire.png")
 
         sc.fill((100, 100, 100))
@@ -400,7 +356,6 @@ while True:
         for e in enemies:
             if not e.is_destroyed:
                 sc.blit(e.image, e.rect)
-        for e in enemies:
             if not e.is_destroyed and e.is_fire:
                 if e.fire.position == 1:
                     f = True
@@ -443,26 +398,12 @@ while True:
             for i in range(len(my_map.image)):
                 if my_map.digitmap[i // len(my_map.digitmap[0])][i % len(my_map.digitmap[0])] == 4:
                     sc.blit(my_map.image[i], my_map.rect[i])  
-        color = 0
-        if tank1.path:
-            for p in tank1.path:
-                pg.draw.circle(sc, (255, 255, 255), (16 * p[1], 16 * p[0]), 2, 2)
-        for i in range(len(enemies)):
-            if not enemies[i].is_destroyed and enemies[i].path:
-                for p in enemies[i].path:
-                    if color == 0:
-                        pg.draw.circle(sc, (255, 0, 0), (16 * p[1], 16 * p[0]), 6, 6)
-                    if color == 1:
-                        pg.draw.circle(sc, (0, 255, 0), (16 * p[1], 16 * p[0]), 4, 4)
-                    if color == 2:
-                        pg.draw.circle(sc, (0, 0, 255), (16 * p[1], 16 * p[0]), 2, 2)
-                color += 1
+        
         for i in range(len(my_map.enemy_count)):
             if my_map.enemy_count[i]:
                 sc.blit(my_map.menu_image[i], my_map.menu_rect[i])
         for i in range(tank1.hp):
             sc.blit(my_map.hp[i], my_map.hp_rect[i])
-        #sc.blit(time_text, time_rect)
 
     dp.update()
     clock.tick(FPS)
