@@ -201,3 +201,90 @@ if tank1.path:
                         flag = True
                 if flag:
                     tank1.Fire("images\\fire.png")
+
+    def ucs(self, start, finish):
+        j_s = int(start[0] / 32)
+        i_s = int(start[1] / 32)
+        j_f = int(finish[0] / 32)
+        i_f = int(finish[1] / 32)
+        if (start[0] - 13) // 32 != j_s:
+            j_s = j_s * 2
+        elif (start[0] + 13) // 32 != j_s:
+            j_s = j_s * 2 + 2
+        else:
+            j_s = j_s * 2 + 1
+
+        if (start[1] - 13) // 32 != i_s:
+            i_s = i_s * 2
+        elif (start[1] + 13) // 32 != i_s:
+            i_s = i_s * 2 + 2
+        else:
+            i_s = i_s * 2 + 1
+
+        if (finish[0] - 13) // 32 != j_f:
+            j_f = j_f * 2
+        elif (finish[0] + 13) // 32 != j_f:
+            j_f = j_f * 2 + 2
+        else:
+            j_f = j_f * 2 + 1
+
+        if (finish[1] - 13) // 32 != i_f:
+            i_f = i_f * 2
+        elif (finish[1] + 13) // 32 != i_f:
+            i_f = i_f * 2 + 2
+        else:
+            i_f = i_f * 2 + 1
+            
+        path_matrix = []
+        for i in range(len(self.small_digitmap)):
+            line = []
+            for j in range(len(self.small_digitmap[i])):
+                line.append((-1, -1))
+            path_matrix.append(line)
+        q = [[(i_s, j_s), (-2, -2)]]
+        f = True
+        while q and f:
+            curr = q[0][0]
+            prev = q[0][1]
+            q.pop(0)
+            path_matrix[curr[0]][curr[1]] = prev
+            if curr[0] == i_f and curr[1] == j_f:
+                f = False
+            if f and path_matrix[curr[0] + 1][curr[1]] == (-1, -1) and self.check((curr[0] + 1, curr[1])):
+                path_matrix[curr[0] + 1][curr[1]] = (-2, -2)
+                q.append([(curr[0] + 1, curr[1]), curr])
+            if f and path_matrix[curr[0]][curr[1] + 1] == (-1, -1) and self.check((curr[0], curr[1] + 1)):
+                path_matrix[curr[0]][curr[1] + 1] = (-2, -2)
+                q.append([(curr[0], curr[1] + 1), curr])
+            if f and path_matrix[curr[0] - 1][curr[1]] == (-1, -1) and self.check((curr[0] - 1, curr[1])):
+                path_matrix[curr[0] - 1][curr[1]] = (-2, -2)
+                q.append([(curr[0] - 1, curr[1]), curr])
+            if f and path_matrix[curr[0]][curr[1] - 1] == (-1, -1) and self.check((curr[0], curr[1] - 1)):
+                path_matrix[curr[0]][curr[1] - 1] = (-2, -2)
+                q.append([(curr[0], curr[1] - 1), curr])
+        path = []
+        f = True
+        curr = (i_f, j_f)
+        if curr == (-1, -1):
+            return path
+        while q and f:
+            path.append(path_matrix[curr[0]][curr[1]])
+            if path_matrix[curr[0]][curr[1]] == (i_s, j_s):
+                f = False
+            else:
+                curr = path_matrix[curr[0]][curr[1]]
+        return path
+
+                if event.key == pg.K_SPACE:
+                    if not tank1.is_fire:
+                        tank1.Fire("images\\fire.png")
+                        
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT] or keys[pg.K_a]:
+            tank1.move = 4
+        elif keys[pg.K_UP] or keys[pg.K_w]:
+            tank1.move = 1
+        elif keys[pg.K_RIGHT] or keys[pg.K_d]:
+            tank1.move = 2
+        elif keys[pg.K_DOWN] or keys[pg.K_s]:
+            tank1.move = 3
