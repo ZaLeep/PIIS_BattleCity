@@ -9,10 +9,10 @@ import random
 import time as t
 
 def is_there_tank(my_tank, enemies, point):
-    if ((point[0] - my_tank.rect.center[0]) ** 2 + (point[1] - my_tank.rect.center[1]) ** 2) ** 0.5 <= 150:
+    if ((point[0] - my_tank.rect.center[0]) ** 2 + (point[1] - my_tank.rect.center[1]) ** 2) ** 0.5 <= 70:
         return True
     for e in enemies:
-        if not e.is_destroyed and ((point[0] - e.rect.center[0]) ** 2 + (point[1] - e.rect.center[1]) ** 2) ** 0.5 <= 150:
+        if not e.is_destroyed and ((point[0] - e.rect.center[0]) ** 2 + (point[1] - e.rect.center[1]) ** 2) ** 0.5 <= 70:
             return True
     return False
 
@@ -22,7 +22,7 @@ def save_result(result, file = "result.csv"):
         csv_writer.writerow(result)
 
 def count_score(killed, hp, time):
-    return killed * 10 - (3 - hp) * 25 - time // 10
+    return killed * 30 - (3 - hp) * 50 - time // 1 * 2
 
 pg.init()
 sc = dp.set_mode((480, 498))
@@ -51,10 +51,10 @@ FPS = 60
 fin = 0
 frames = 0
 round_time = 0
-algh = 0
-deep = 2
+algh = 1
+deep = 4
 
-start_dumb_count = 5
+start_dumb_count = 0
 my_map = map(60, 64)
 tank1 = None 
 enemies = []
@@ -64,8 +64,6 @@ spawn = 1
 dumb_count = start_dumb_count
 spawn_point = [(48, 48), (240, 48), (48, 240), (432, 240), (432, 48)]
 
-pg.mixer.music.load("sounds\\Horse Steppin.mp3")
-pg.mixer.music.play(-1)
 while True:
     if menu:
         for event in pg.event.get():
@@ -93,18 +91,6 @@ while True:
                     fin = 0
                     my_map.select_map(selected + 1)
                     tank1 = my_tank(240, 384, 1, 3, "images\my_tank.png")
-                    if selected == 0:
-                        pg.mixer.music.load("sounds\\Knock Knock.mp3")
-                        pg.mixer.music.play(-1)
-                    elif selected == 1:
-                        pg.mixer.music.load("sounds\\Hydrogen.mp3")
-                        pg.mixer.music.play(-1)
-                    elif selected == 2:
-                        pg.mixer.music.load("sounds\\Hotline.mp3")
-                        pg.mixer.music.play(-1)
-                    else:
-                        pg.mixer.music.load("sounds\\Crystals.mp3")
-                        pg.mixer.music.play(-1)
                     round_time = t.time()
 
         sc.fill((0, 0, 0))
@@ -123,9 +109,7 @@ while True:
     else:
         if tank1.hp == 0:
             time = t.time() - round_time
-            save_result(["Lose", "Map #" + str(selected + 1) if selected < 3 else "Random map", str(time)[:6] + "sec", count_score(10 - enemy_count, tank1.hp, time), ("Minimax(deep = "  + str(deep) + ")" if algh else "Expectimax")])
-            pg.mixer.music.load("sounds\\Horse Steppin.mp3")
-            pg.mixer.music.play(-1)
+            save_result([0, tank1.hp, 10 - enemy_count, selected + 1, str(time)[:6], count_score(10 - enemy_count, tank1.hp, time), algh])
             menu = True
             enemies.clear()
             selected = 0
@@ -140,9 +124,7 @@ while True:
                 spawn = enemy_count
             if enemy_count == 0:
                 time = t.time() - round_time
-                save_result(["Win", "Map #" + str(selected + 1) if selected < 3 else "Random map", str(time)[:6] + "sec", count_score(10 - enemy_count, tank1.hp, time), ("Minimax(deep = "  + str(deep) + ")" if algh == 1 else "Expectimax")])
-                pg.mixer.music.load("sounds\\Horse Steppin.mp3")
-                pg.mixer.music.play(-1)
+                save_result([1, tank1.hp, 10 - enemy_count, selected + 1, str(time)[:6], count_score(10 - enemy_count, tank1.hp, time), algh])
                 fin = 1
                 menu = True
         for i in range(spawn - enemy_on_map):
@@ -168,8 +150,6 @@ while True:
                     selected = 0
                     enemy_count = 10
                     search = 1
-                    pg.mixer.music.load("sounds\\Horse Steppin.mp3")
-                    pg.mixer.music.play(-1)
 
         if tank1.move_times == 0 or tank1.algh_time == 0:
             step = 0

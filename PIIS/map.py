@@ -234,7 +234,6 @@ class map(pg.sprite.Sprite):
         elif move == 4:
             return(self.check([i, j - 1]))
 
-
     def bottomright(self, point):
         j = point[0] // 32
         i = point[1] // 32
